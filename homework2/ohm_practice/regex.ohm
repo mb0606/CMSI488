@@ -23,8 +23,9 @@ function isMastercard(s) {
 
 function isDivisibleBy64(s) {
    const grammar = ohm.grammar(`IsDivisibleBy64 {
-      isDivisibleBy64 = "1" ("0" | "1")* "000000" --normal
-                      | "0"+ --zero
+      isDivisibleBy64 =  (~("000000" end) ("0"|"1"))* "000000"   -- nonzero
+                        | "0"+ -- zero
+      binary          =  ("0"|"1") 
    }`)
    return grammar.match(s).succeeded();
 }
@@ -54,6 +55,13 @@ function isMLComment(s) {
    }`)
    return grammar.match(s).succeeded();
 }
+function isNotDogDoorDenWithLookAround(s) {
+   const grammar = ohm.grammar(`IsNotDogDoorDenWithLookAround {
+      isNotDogDoorDenWithLookAround = ~keyword alnum*
+      keyword  = ("dog" | "door"  | "den") ~alnum
+   }`)
+   return grammar.match(s).succeeded();
+}
 
 module.exports = {
    isCanadianPostalCode,
@@ -63,4 +71,5 @@ module.exports = {
    isMLComment,
    isDivisibleBy64,
    isAdaFloat,
+   isNotDogDoorDenWithLookAround,
 }
